@@ -1,15 +1,19 @@
 ﻿using System;
-using System.Runtime.ExceptionServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Threading;
 
 namespace NewNeuralNetwork
 {
+    [Serializable]
     class neuron
     {
-        static void Main(string[] args)
+        static void Main(string[] args) // Examination of the back propagation function by teaching the neural network to do xor. One output would be XOR of the two inputs, the second would be NOT XOR, the third AND the the fourth OR.
         {
 
-            neuralnetwork asd = new neuralnetwork(3, 3, 2, 2);
+            neuralnetwork asd = new neuralnetwork(2, 4, 2, 4);
             double[] output = new double[2];
+
 
 
             // the input values
@@ -19,62 +23,69 @@ namespace NewNeuralNetwork
             double[] x4 = { 1, 1 };
 
 
-
-
-            // desired results
-            double[] results = { 0, 1, 1, 0 };
-
             int epoch = 0;
 
         Retry:
             epoch++;
-            for (int i = 0; i < 4; i++)  // very important, do NOT train for only one example
+            for (int i = 0; i < 4; i++)
             {
                 // 1) forward propagation (calculates output)
-                double[] qwe = new double[2];
+                
+                double[] results = new double[4];       // desired results
+
                 if (i == 0)
                 {
                     output = asd.run(x1);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x1[0], x1[1], output[0], output[1]);
-                    qwe[0] = 0;
-                    qwe[1] = 1;
-                    asd.bp(qwe);
-
+                    results[0] = (int)x1[0] ^ (int)x1[1];
+                    results[1] = 1- ((int)x1[0] ^ (int)x1[1]);
+                    results[2] = (int)x1[0] & (int)x1[1];
+                    results[3] = (int)x1[0] | (int)x1[1];
+                    asd.bp(results);
+                    asd.activateAdjustments();
                 }
                 if (i == 1)
                 {
                     output = asd.run(x2);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x2[0], x2[1], output[0], output[1]);
-                    qwe[0] = 1;
-                    qwe[1] = 0;
-                    asd.bp(qwe);
+                    results[0] = (int)x2[0] ^ (int)x2[1];
+                    results[1] = 1 - ((int)x2[0] ^ (int)x2[1]);
+                    results[2] = (int)x2[0] & (int)x2[1];
+                    results[3] = (int)x2[0] | (int)x2[1];
+                    asd.bp(results);
+                    asd.activateAdjustments();
+
 
                 }
                 if (i == 2)
                 {
                     output = asd.run(x3);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x3[0], x3[1], output[0], output[1]);
-                    qwe[0] = 1;
-                    qwe[1] = 0;
-                    asd.bp(qwe);
+                    results[0] = (int)x3[0] ^ (int)x3[1];
+                    results[1] = 1 - ((int)x3[0] ^ (int)x3[1]);
+                    results[2] = (int)x3[0] & (int)x3[1];
+                    results[3] = (int)x3[0] | (int)x3[1];
+                    asd.bp(results);
+                    asd.activateAdjustments();
+
 
                 }
                 if (i == 3)
                 {
                     output = asd.run(x4);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x4[0], x4[1], output[0], output[1]);
-                    qwe[0] = 0;
-                    qwe[1] = 1;
-                    asd.bp(qwe);
+                    //Console.WriteLine("{0} xor {1} = {2} ------- {3}", x4[0], x4[1], output[0], output[1]);
+                    results[0] = (int)x4[0] ^ (int)x4[1];
+                    results[1] = 1 - ((int)x4[0] ^ (int)x4[1]);
+                    results[2] = (int)x4[0] & (int)x4[1];
+                    results[3] = (int)x4[0] | (int)x4[1];
+                    asd.bp(results);
+                    asd.activateAdjustments();
 
                 }
 
             }
 
-            if (epoch < 500000)
+            if (epoch < 50000)
                 goto Retry;
 
-            Console.WriteLine("asdadasdasdasdasdasdasdasdasd");
+            //Console.WriteLine("asdadasdasdasdasdasdasdasdasd");
 
             for (int i = 0; i < 4; i++)  // very important, do NOT train for only one example
             {
@@ -83,23 +94,23 @@ namespace NewNeuralNetwork
                 if (i == 0)
                 {
                     output = asd.run(x1);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x1[0], x1[1], output[0], output[1]);
+                    Console.WriteLine("{0} xor {1} = {2} ------- {0} not xor {1} = {3} ------- {0} and {1} = {4} ------- {0} or {1} = {5}", x1[0], x1[1], output[0], output[1], output[2], output[3]);
                 }
                 if (i == 1)
                 {
                     output = asd.run(x2);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x2[0], x2[1], output[0], output[1]);
+                    Console.WriteLine("{0} xor {1} = {2} ------- {0} not xor {1} = {3} ------- {0} and {1} = {4} ------- {0} or {1} = {5}", x2[0], x2[1], output[0], output[1], output[2], output[3]);
                 }
                 if (i == 2)
                 {
                     output = asd.run(x3);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x3[0], x3[1], output[0], output[1]);
+                    Console.WriteLine("{0} xor {1} = {2} ------- {0} not xor {1} = {3} ------- {0} and {1} = {4} ------- {0} or {1} = {5}", x3[0], x3[1], output[0], output[1], output[2], output[3]);
 
                 }
                 if (i == 3)
                 {
                     output = asd.run(x4);
-                    Console.WriteLine("{0} xor {1} = {2} ------- {3}", x4[0], x4[1], output[0], output[1]);
+                    Console.WriteLine("{0} xor {1} = {2} ------- {0} not xor {1} = {3} ------- {0} and {1} = {3} ------- {0} or {1} = {3}", x4[0], x4[1], output[0], output[1], output[2], output[3]);
                 }
 
             }
@@ -108,20 +119,22 @@ namespace NewNeuralNetwork
 
         static Random rnd = new Random();
 
-        public double[] Weights;
-        public double bias;
-        public double value = 0;
-        public double error = 0;
-        public neuron[] neuronsOut;
+        public double[] Weights;    // the weights values are between -1 -> 1. The output from this neuron to neuron in the next layer is multiplied by its mached weight.
+        public double bias;         // the bias is added to the value of this neuron in every time the neuron gets its value.
+        public double value = 0;    // the value the neuron holds. 
+        public neuron[] neuronsOut; // array of the neurons which this neuron is conected directly to.
+        public double[] errorArr;   // containing the erors for every neuron in the output level of the network that this neuron is a part of.
+                                    // eror = desired result - actual result.
+        public double[] influence;  // influence of this neuron on every output neuron in the final output layer.
+        public double[,] influence2;// influence of every output neuron on every neuron in the final output layer.
+        double[] changeSum;         // sum of the changes that the back prop function gives.
+        double divideBy;            // the num of times the back prop function was called befor adjustments were activated.
+        int FinaleoutputLength;     // the output length of the last layer (output layer) in the neural network which this neuron is belongs to.
+        int outputLength;           // the num of neuron in the next layer to this neuron layer.
 
-        public double[] errorArr;
-        public double[] influence;
-        public double[,] influence2;
 
-        int FinaleoutputLength;
 
-        int outputLength;
-
+        // constructor function. gets the number of output neurons of this neuron and the number of neuron in last layer (output layer).
         public neuron(int outputLength, int FinaleoutputLength)
         {
             this.outputLength = outputLength;
@@ -129,52 +142,124 @@ namespace NewNeuralNetwork
             errorArr = new double[FinaleoutputLength];
             influence = new double[FinaleoutputLength];
             influence2 = new double[outputLength, FinaleoutputLength];
-
             this.FinaleoutputLength = FinaleoutputLength;
-            build();
-        }
-        void build()
-        {
             Weights = new double[outputLength];
-            for (int i = 0; i < outputLength; i++)
+            changeSum = new double[outputLength + 1];
+            divideBy = 0;
+            for (int i = 0; i < outputLength; i++)  // create randomized weights
             {
                 Weights[i] = 2 * rnd.NextDouble() - 1;
             }
             bias = 2 * rnd.NextDouble() - 1;
         }
 
+        // fills a neuron slot in the 'neuronsOut' array with a given neuron. The slot position is also given.
         public void neuronsOutFill(neuron x, int place)
         {
             neuronsOut[place] = x;
         }
+
+        // relu activation function
+        /*public void Activation_function()
+        {
+            if (value > 999)
+            {
+                value = 999;
+                return;
+            }
+
+            if (value > 0)
+            {
+                return;
+            }
+            else
+            {
+                double a = 0.05;
+                value = a * value;
+            }
+            if (value < -999)
+            {
+                value = -999;
+            }
+        }*/
+
+        // sigmoid activation function
         public void Activation_function() { value = 1.0 / (1.0 + Math.Exp(-value)); }
+
+        // relu derivative
+        /*public double derivative() 
+        {
+            if (value > 0)
+            {
+                return (1);
+            }
+            else
+            {
+                double a = 0.05;
+                return (a);
+            }
+        }*/
+
+
+        // sigmoid derivative
         public double derivative() { return value * (1 - value); }
 
-        public void adjustWeights()
+        // changes the bias and all the weights that connecting to the neurons in the next layer to this neuron by a small number. the variable 'a' determine the degree of change.
+        // good for evolutionary purposes. creates mutations.
+        public void Change(double a)
+        {
+            for (int i = 0; i < Weights.Length; i++)
+            {
+                Weights[i] *= 1 + ((2 * rnd.NextDouble() - 1) / a);
+                Weights[i] += (2 * rnd.NextDouble() - 1) / (a * 3);
+            }
+            bias *= 1 + ((2 * rnd.NextDouble() - 1) / a);
+            bias += (2 * rnd.NextDouble() - 1) / (a * 3);
+        }
+
+        // called by the back prop that's in the neuralnetwork class. Adjust the Bias changes that need to be done by the back prop function but not yet activates them.
+        public void adjustBias()
         {
             double sum = 0;
-            double w = 0.1;
+            for (int j = 0; j < FinaleoutputLength; j++)
+            {
+                sum += errorArr[j] * influence[j] * derivative();
+            }
+            changeSum[outputLength] += sum / FinaleoutputLength;
+            divideBy++;
+        }
+
+        // called by the back prop that's in the neuralnetwork class. Adjust the weights changes that need to be done by the back prop function but not yet activates them.
+        public void adjustWeights()
+        {
+            double sum;
             for (int z = 0; z < outputLength; z++)
             {
                 sum = 0;
                 for (int j = 0; j < FinaleoutputLength; j++)
                 {
-                    sum += errorArr[j] * influence2[z, j] * value;
-                    //Console.WriteLine("                   "+ value + "    "+ influence2[z, j] + "    " + errorArr[j]);
-                }
-                //Console.WriteLine("                  sum         " + sum);
-                //Console.WriteLine("                  B Weights         " + Weights[z]);
-                Weights[z] += w * (sum / FinaleoutputLength);
-                //Console.WriteLine("                  A Weights         " + Weights[z]);
 
+                    sum += errorArr[j] * influence2[z, j] * value;
+                }
+                changeSum[z] += sum / FinaleoutputLength;
             }
-            sum = 0;
-            for (int j = 0; j < FinaleoutputLength; j++)
-            {
-                sum += errorArr[j] * influence[j] * derivative();
-            }
-            bias += w * (sum / FinaleoutputLength);
         }
+
+        // activates the adjustments saved by both 'adjustWeights()' and 'adjustBias()'.
+        public void activateAdjustments()
+        {
+            double w = 0.075;    // learning rate
+            for (int z = 0; z < outputLength; z++)
+            {
+                Weights[z] += w * changeSum[z]/ divideBy;
+            }
+            bias += w * changeSum[outputLength] / divideBy;
+            
+            changeSum = new double[outputLength + 1];
+            divideBy = 0;
+        }
+
+        // resets the variables: 'errorArr', 'influence', 'influence2'.
         public void initialization()
         {
             errorArr = new double[FinaleoutputLength];
@@ -184,17 +269,19 @@ namespace NewNeuralNetwork
     }
 
     //*****************************************************************************************************************************************************
-    class neuralnetwork
+    [Serializable]
+    public class neuralnetwork
     {
-        public double score = 0;
         static Random rnd = new Random();
-        public neuron[] entryLevel;
-        public neuron[] outputLevel;
-        public int length;
-        public int numOfneuronsRows;
-        public neuron[,] neurons;
-        public double[,] bias;
-        public int outputLength;
+        public double score = 0;            // score of the network. usefull for evolutionary lerning.
+        neuron[] entryLevel;                // arry of neuron that is the entry level layer (network input).
+        neuron[] outputLevel;               // arry of neuron that is the last layer of the network (network output).
+        public int length;                  // num of neuron in every hidden layer.
+        public int numOfneuronsRows;        // num of hidden layers (must be at least one).
+        neuron[,] neurons;                  // two dimensional array of neurons. those are the hidden leyars.
+        public int outputLength;            // last layer lenght (network output lenght).
+
+        // constructor function.
         public neuralnetwork(int numOfneuronsRows1, int length1, int entryLevelLenght, int outputLength)
         {
             numOfneuronsRows = numOfneuronsRows1;
@@ -205,6 +292,8 @@ namespace NewNeuralNetwork
             neurons = new neuron[numOfneuronsRows, length];
             build();
         }
+
+        // build the neural network. Fills the arrays with neurons and connect them.
         void build()
         {
             for (int i = 0; i < entryLevel.Length; i++)
@@ -225,7 +314,6 @@ namespace NewNeuralNetwork
                     }
                 }
             }
-            
             for (int i = 0; i < entryLevel.Length; i++)
             {
                 for (int j = 0; j < length; j++)
@@ -246,18 +334,20 @@ namespace NewNeuralNetwork
                     }
                 }
             }
-
             for (int i = 0; i < outputLevel.Length; i++)
             {
-                outputLevel[i] = new neuron(length, outputLength);
+                outputLevel[i] = new neuron(outputLength, outputLength);
                 for (int j = 0; j < length; j++)
                 {
                     neurons[numOfneuronsRows - 1, j].neuronsOutFill(outputLevel[i], i);
                 }
             }
         }
+
+        // running the input forward through the network.
         void forward()
         {
+            // input layer to first hidden layer
             for (int i = 0; i < length; i++)
             {
                 neurons[0, i].value = 0;
@@ -269,6 +359,7 @@ namespace NewNeuralNetwork
                 neurons[0, i].Activation_function();
             }
 
+            // every hidden layer to next hidden layer
             for (int i = 1; i < numOfneuronsRows; i++)
             {
                 for (int j = 0; j < length; j++)
@@ -282,6 +373,8 @@ namespace NewNeuralNetwork
                     neurons[i, j].Activation_function();
                 }
             }
+
+            // last hidden layer to output layer
             for (int i = 0; i < outputLevel.Length; i++)
             {
                 outputLevel[i].value = 0;
@@ -290,29 +383,234 @@ namespace NewNeuralNetwork
                     outputLevel[i].value += neurons[numOfneuronsRows - 1, z].value * neurons[numOfneuronsRows - 1, z].Weights[i];
                 }
                 outputLevel[i].value += outputLevel[i].bias;
-
                 outputLevel[i].Activation_function();
             }
         }
+
+        // public function which gets the input, run it through the network (with forward()) and retuens the last layer (output layer) values in an arrey.
         public double[] run(double[] input)
         {
-            for (int i = 0; i < entryLevel.Length; i++)
+            for (int i = 0; i < entryLevel.Length; i++)  // fill the entry Level.
             {
                 entryLevel[i].value = input[i];
             }
-            forward();
+
+            forward();    // running the input through the network.
+
             double[] output = new double[outputLevel.Length];
 
-            for (int i = 0; i < outputLevel.Length; i++)
+            for (int i = 0; i < outputLevel.Length; i++)    // fill the output array which will be return.
             {
                 output[i] = outputLevel[i].value;
             }
+
             return (output);
         }
-        //*********************************************************************************************************************************************************************************
-        public void bp(double[] desiredResults)
+
+        // public function which calls 'run()' and then return the position in the returned array which holds the largest value.
+        public int Result(double[] x)
+        {
+            run(x); 
+            
+            double temp = 0;
+            int biggest = 0;
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                if (outputLevel[i].value > temp)
+                {
+                    biggest = i;
+                    temp = outputLevel[i].value;
+                }
+            }
+            return (biggest);
+        }
+        public void print()
+        {
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                Console.Write(outputLevel[i].value + "  ");
+            }
+        }
+
+        // public function which calls 'run()' and then return the position in the returned array which holds the largest value and also is true is the 'authorizedPositions' bool array.
+        public int Result(double[] x, bool[] authorizedPositions)
+        {
+            run(x);
+            double temp = 0;
+            int biggest = 0;
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                if (outputLevel[i].value > temp && authorizedPositions[i])
+                {
+                    biggest = i;
+                    temp = outputLevel[i].value;
+                }
+            }
+            return (biggest);
+        }
+
+
+        // changes all the bias and weights in the neural network by a small number. the variable 'a' determine the degree of change.
+        // good for evolutionary purposes. creates mutations in the network.
+        public void Change(double a)
+        {
+            for (int i = 0; i < entryLevel.Length; i++)
+            {
+                entryLevel[i].Change(a);
+            }
+            for (int i = 0; i < numOfneuronsRows; i++)
+            {
+                for (int j = 0; j < length; j++)
+                {
+                    neurons[i, j].Change(a);
+                }
+            }
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                outputLevel[i].Change(a);
+            }
+        }
+
+
+        // saving the network to the computer memory.
+        public void Save(string x)
+        { 
+            BinaryFormatter bf = new BinaryFormatter();
+            int y = 0;
+            FileStream file;
+            if (File.Exists(x + length + "A" + (numOfneuronsRows) + "A" + y))
+            {
+                while (File.Exists(x + length + "A" + (numOfneuronsRows) + "A" + y))
+                {
+                    y++;
+                }
+                file = File.Create(x + length + "A" + (numOfneuronsRows) + "A" + y);
+            }
+            else
+            {
+                file = File.Create(x + length + "A" + (numOfneuronsRows) + "A" + 0);
+            }
+            //  "c:\\4inRow\\_neuralnetwork.dat"
+            neuralnetwork data = new neuralnetwork(numOfneuronsRows, length, entryLevel.Length, outputLength);
+
+            for (int i = 0; i < entryLevel.Length; i++)
+            {
+                for (int z = 0; z < entryLevel[i].Weights.Length; z++)
+                {
+                    data.entryLevel[i].Weights[z] = entryLevel[i].Weights[z];
+                }
+                data.entryLevel[i].bias = entryLevel[i].bias;
+
+            }
+            for (int i = 0; i < numOfneuronsRows; i++)
+            {
+                for (int j = 0; j < length; j++)
+                {
+                    for (int z = 0; z < neurons[i, j].Weights.Length; z++)
+                    {
+                        data.neurons[i, j].Weights[z] = neurons[i, j].Weights[z];
+                    }
+
+                    data.neurons[i, j].bias = neurons[i, j].bias;
+                }
+            }
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                for (int z = 0; z < outputLevel[i].Weights.Length; z++)
+                {
+                    data.outputLevel[i].Weights[z] = outputLevel[i].Weights[z];
+                }
+                data.outputLevel[i].bias = outputLevel[i].bias;
+            }
+
+            data.score = score;
+
+            bf.Serialize(file, data);
+            file.Close();
+        }
+
+        // loading the network from the computer memory.
+        public void Load(neuralnetwork data)
+        {
+            for (int i = 0; i < entryLevel.Length; i++)
+            {
+                for (int z = 0; z < entryLevel[i].Weights.Length; z++)
+                {
+                    entryLevel[i].Weights[z] = data.entryLevel[i].Weights[z];
+                }
+                entryLevel[i].bias = data.entryLevel[i].bias;
+
+            }
+            for (int i = 0; i < numOfneuronsRows; i++)
+            {
+                for (int j = 0; j < length; j++)
+                {
+                    for (int z = 0; z < neurons[i, j].Weights.Length; z++)
+                    {
+                        neurons[i, j].Weights[z] = data.neurons[i, j].Weights[z];
+                    }
+
+                    neurons[i, j].bias = data.neurons[i, j].bias;
+                }
+            }
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                for (int z = 0; z < outputLevel[i].Weights.Length; z++)
+                {
+                    outputLevel[i].Weights[z] = data.outputLevel[i].Weights[z];
+                }
+                outputLevel[i].bias = data.outputLevel[i].bias;
+            }
+        }
+
+        // loading a network from a given network (duplicating the given network into this network).
+        public void Load(int fileNum, string x)
         {
 
+            if (File.Exists(x + length + "A" + (numOfneuronsRows) + "A" + fileNum))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(x + length + "A" + (numOfneuronsRows) + "A" + fileNum, FileMode.Open);
+                neuralnetwork data = (neuralnetwork)bf.Deserialize(file);
+                file.Close();
+                for (int i = 0; i < entryLevel.Length; i++)
+                {
+                    for (int z = 0; z < entryLevel[i].Weights.Length; z++)
+                    {
+                        entryLevel[i].Weights[z] = data.entryLevel[i].Weights[z];
+                    }
+                    entryLevel[i].bias = data.entryLevel[i].bias;
+
+                }
+                for (int i = 0; i < numOfneuronsRows; i++)
+                {
+                    for (int j = 0; j < length; j++)
+                    {
+                        for (int z = 0; z < neurons[i, j].Weights.Length; z++)
+                        {
+                            neurons[i, j].Weights[z] = data.neurons[i, j].Weights[z];
+                        }
+                        neurons[i, j].bias = data.neurons[i, j].bias;
+                    }
+                }
+                for (int i = 0; i < outputLevel.Length; i++)
+                {
+                    for (int z = 0; z < outputLevel[i].Weights.Length; z++)
+                    {
+                        outputLevel[i].Weights[z] = data.outputLevel[i].Weights[z];
+                    }
+                    outputLevel[i].bias = data.outputLevel[i].bias;
+                }
+            }
+        }
+
+
+        //*********************************************************************************************************************************************************************************
+        
+        //back propogation
+        public void bp(double[] desiredResults)
+        {
+            // adjust the bias and weights of every neuron in the last layer in the network (output layer).
             for (int i = 0; i < outputLevel.Length; i++)
             {
                 for (int j = 0; j < outputLevel.Length; j++)
@@ -321,10 +619,11 @@ namespace NewNeuralNetwork
                     outputLevel[i].errorArr[j] = (desiredResults[j] - outputLevel[j].value);
                 }
                 outputLevel[i].influence[i] = 1;
-                //Console.WriteLine("output " + outputLevel[i].value);
-
+                outputLevel[i].adjustBias();
+                outputLevel[i].adjustWeights();
             }
 
+            // adjust the bias and weights of every neuron in the hidden layers. Each adjustment is based on information from later layers which are being dealt first, as it called, back propagation...
             for (int i = numOfneuronsRows - 1; i >= 0; i--)
             {
                 for (int j = 0; j < length; j++)
@@ -335,13 +634,11 @@ namespace NewNeuralNetwork
                         {
                             if (z == 0)
                             {
-                                //Console.WriteLine(i + " " + j + " " + outputLevel[z].errorArr[m] + "  " + neurons[i, j].neuronsOut[z].errorArr[m]);
                                 neurons[i, j].errorArr[m] = neurons[i, j].neuronsOut[z].errorArr[m];
                             }
-                            neurons[i, j].influence2[z, m] += neurons[i, j].neuronsOut[z].influence[m] * neurons[i, j].neuronsOut[z].derivative();
+                            neurons[i, j].influence2[z, m] = neurons[i, j].neuronsOut[z].influence[m] * neurons[i, j].neuronsOut[z].derivative();
                         }
                     }
-                    //Console.WriteLine(i + " " + j);
                     neurons[i, j].adjustWeights();
                     for (int z = 0; z < neurons[i, j].neuronsOut.Length; z++)
                     {
@@ -350,9 +647,11 @@ namespace NewNeuralNetwork
                             neurons[i, j].influence[m] += neurons[i, j].neuronsOut[z].influence[m] * neurons[i, j].neuronsOut[z].derivative() * neurons[i, j].Weights[z];
                         }
                     }
+                    neurons[i, j].adjustBias();
                 }
             }
 
+            // adjust the bias and weights of every neuron in the neurons of the first layer (input layet). Each adjustment is based on information from the first hidden layer.
             for (int i = 0; i < entryLevel.Length; i++)
             {
                 for (int z = 0; z < length; z++)
@@ -374,10 +673,13 @@ namespace NewNeuralNetwork
                         entryLevel[i].influence[m] += entryLevel[i].neuronsOut[z].influence[m] * entryLevel[i].neuronsOut[z].derivative() * entryLevel[i].Weights[z];
                     }
                 }
+                entryLevel[i].adjustBias();
             }
             initialization();
         }
 
+
+        // initializing 'errorArr', 'influence' and 'influence2' in every single neuron in the network.
         private void initialization()
         {
             for (int i = 0; i < entryLevel.Length; i++)
@@ -395,6 +697,26 @@ namespace NewNeuralNetwork
             for (int i = 0; i < outputLevel.Length; i++)
             {
                 outputLevel[i].initialization();
+            }
+        }
+
+        // activate the adjustments made by the back prop function for every single neuron in the network.
+        public void activateAdjustments()
+        {
+            for (int i = 0; i < entryLevel.Length; i++)
+            {
+                entryLevel[i].activateAdjustments();
+            }
+            for (int i = 0; i < numOfneuronsRows; i++)
+            {
+                for (int j = 0; j < length; j++)
+                {
+                    neurons[i, j].activateAdjustments();
+                }
+            }
+            for (int i = 0; i < outputLevel.Length; i++)
+            {
+                outputLevel[i].activateAdjustments();
             }
         }
     }
